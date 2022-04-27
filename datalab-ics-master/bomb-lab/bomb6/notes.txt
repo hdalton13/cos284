@@ -1,0 +1,94 @@
+I was trying to give Tina Fey more material.
+1 2 4 8 16 32
+1 -78
+3 0
+555523
+1 6 2 3 4 5
+
+Notes:
+0000000000001f75 g     F .text	000000000000003c              explode_bomb
+0000000000001b7a g     F .text	0000000000000057              secret_phase
+00000000000021fa g     F .text	0000000000000030              sigalrm_handler
+0000000000001c71 g     F .text	0000000000000067              strings_not_equal
+
+
+Error: CHlient unIable to Hcreate sIG ockefA
+Error: DHNS is unIable to Hresolve Iserver aIG(ddrefAG,ssA
+Error: UHnable toI connectH to the IG servfAG$erA
+Error: RHesult stIring tooH large. I IncreaseH SUBMITRI
+
+HIHIGA
+
+Questions:
+
+0x00005555555557ba <+6>:	mov    %fs:0x28,%rax
+What is %fs:0x28 doing?
+
+0x555555758710 - "4" 0x555555758710 - "1 2 3 4 5 6
+
+0x0000555555555985
+
+Phase 4!
+In func 4, %edi stores the first number for the input string.
+%edi controls the first 2 recursive jumps in func4.
+next steps: figure out how it affects calculations in func4
+goal: make func4 return 0 - Goal complete when 1st is 3!
+
+
+secret_phase is somehow called in phase defused
+
+Ideas for Phase 6:
+--> six numbers
+--> requirements may be hidden
+--> GO SLOW
+
+~NOTES FROM PHASE 6~
+at the start of the function call, %rax %rdx %rdi and %r8 all store the input 
+string but after <read_six_numbers> finishes only %rdi still holds the input 
+string.
+
+(from slack) phase 6 uses a linked list to hold the six numbers.
+typedef struct nodeStruct
+{
+    int value; //4
+    int index; //4
+    struct nodeStruct *next; //4
+} listNode;
+
+next = &nodeStruct + 8
+
+around the time you start looping in the <+55> range, %rdi now only holds "6"
+
+Phase_6 jump statements
+"4 1 3 1 3 2"
+
+%rbx is an array of some kind i think?
+6 1 2 3 4 5 -> 865 >= 873 failed (0 passes)
+3 4 1 2 5 6 -> 666 >= 588 -> 588 >= 873 failed (1 pass)
+3 1 6 5 2 4 -> 666 >= 873 (0 passes)
+1 2 3 4 5 6 -> 873 >= 820 -> 820 >= 666 -> 666 >= 588 -> 588 >= 367 -> 367 >= 865 (4 passes)
+1 6 2 3 4 5 -> 6 PASSES EZ CLAP
+
+
+9  1  0x0000555555555a25 +48 Unconditional
+10  0x0000555555555a2c 
+11 6  0x0000555555555a34 +57 jg  ebx > 5
+12 5  0x0000555555555a3f +74 jne eax == rbp
+13   0x0000555555555a46
+14 2/7  0x0000555555555a59 +100 ja %eax>5 -> e_b
+15 3/8  0x0000555555555a63 +110 je $r14d == 0x6 -Must pass this!
+16 4/9  0x0000555555555a68 +115 Unconditional - If hit more than 1x, e_b imminent
+17 10   0x0000555555555a85 +144 r12 = rcx
+18 11   0x0000555555555a8c +151 unconditional
+19  0x0000555555555a97   
+20  0x0000555555555aa6
+21  12  0x0000555555555aba +197 
+22  0x0000555555555abc
+23  0x0000555555555aa6
+24  0x0000555555555afd
+25  0x0000555555555b06
+26  0x0000555555555b10 -> e_b
+27  0x0000555555555b17
+28  0x0000555555555b27
+
+print *(int *) $rbp
